@@ -18,11 +18,17 @@ git push -u origin main
 
 ## 2. Deploy API (Render — recommended)
 
+> **Important:** API lives in `/server`. Do **not** use repo-root `yarn install && yarn build`
+> (that tries to build the Vite client and fails). Use Root Directory = `server`.
+
 1. [Render](https://render.com) → New → Blueprint → select this repo (`render.yaml`)
-   - Or New Web Service → root directory `server`
-2. Build: `npm install && npm run build`
-3. Start: `npm run start`
-4. Set env vars (from `server/.env.example`):
+   - Or **New Web Service** → connect repo, then set:
+     - **Root Directory:** `server`
+     - **Build Command:** `NPM_CONFIG_PRODUCTION=false npm install && npm run build`
+     - **Start Command:** `npm run start`
+     - **Node version:** `20` (or set `NODE_VERSION=20.20.0`)
+2. Health check path: `/health`
+3. Set env vars (from `server/.env.example`):
 
 | Key | Example |
 |---|---|

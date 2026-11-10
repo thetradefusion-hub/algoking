@@ -4,12 +4,15 @@ services:
     runtime: node
     rootDir: server
     plan: free
-    buildCommand: npm install && npm run build
+    # Install with devDependencies so `tsc` is available even when NODE_ENV=production
+    buildCommand: NPM_CONFIG_PRODUCTION=false npm install && npm run build
     startCommand: npm run start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: "20.20.0"
       - key: PORT
         value: 5000
       - key: PLATFORM_MODE
