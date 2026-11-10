@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+/*
+  AlgoKing Ribbon brand
+  Primary (Algo blue): navy → electric cyan
+  Secondary (King accent): amber → gold
+*/
+@theme {
+  --color-brand-primary: #0052E0;
+  --color-brand-secondary: #0088E8;
+  --color-brand-accent: #F07A00;
+  --color-brand-deep: #000F24;
+  --color-brand-bg: #D8E0EC;
+  --color-brand-dark: #00060F;
+  --color-brand-card: #F4F7FB;
+  --color-brand-gold: #E8B400;
+  --color-brand-success: #128A58;
+  --color-brand-warning: #F07A00;
+  --color-brand-danger: #C9183A;
+  --color-brand-text: #061019;
+  --color-brand-muted: #4E5F75;
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --radius-card: 18px;
+}
+
+:root {
+  color-scheme: light;
+  --brand-tint: #C9D9F0;
+  --brand-tint-strong: #B3CBEA;
+  --brand-shadow: 0 14px 32px rgba(0, 15, 36, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: #b8c4d6;
+  color: var(--color-brand-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app-shell {
+  width: 100%;
+  max-width: 430px;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 100dvh;
+  position: relative;
+  background: var(--color-brand-bg);
+  box-shadow: 0 0 40px rgba(0, 15, 36, 0.18);
+}
+
+.safe-bottom {
+  padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Primary Algo blue ribbon gradient — navy-heavy */
+.brand-gradient {
+  background: linear-gradient(135deg, #0077DD 0%, #0047B8 42%, #000F24 100%);
+}
+
+.brand-gradient-soft {
+  background: linear-gradient(180deg, #0066CC 0%, #003A8C 100%);
+}
+
+/* Secondary King orange/gold accent */
+.brand-accent-gradient {
+  background: linear-gradient(135deg, #E8B400 0%, #F07A00 100%);
+}
+
+.brand-hero {
+  background: linear-gradient(145deg, #00060F 0%, #001B3D 40%, #0047B8 100%);
+}
+
+.ak-card {
+  background: #f4f7fb;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0, 15, 36, 0.1);
+  border: 1px solid rgba(0, 27, 61, 0.06);
+}
+
+.ak-chip {
+  border-radius: 999px;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ak-tint {
+  background: var(--brand-tint);
+  color: var(--color-brand-primary);
+}
+
+.admin-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.admin-scroll::-webkit-scrollbar-thumb {
+  background: #c5d3e6;
+  border-radius: 999px;
+}
+
+@keyframes price-up-flash {
+  0% {
+    transform: translateY(2px);
+    opacity: 0.75;
+  }
+  40% {
+    transform: translateY(-1px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes price-down-flash {
+  0% {
+    transform: translateY(-2px);
+    opacity: 0.75;
+  }
+  40% {
+    transform: translateY(1px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-price-up {
+  animation: price-up-flash 0.55s ease-out;
+}
+
+.animate-price-down {
+  animation: price-down-flash 0.55s ease-out;
+}

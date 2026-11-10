@@ -1,0 +1,22 @@
+{
+  "name": "AlgoKing",
+  "short_name": "AlgoKing",
+  "description": "Grow Your Future.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F2F6FC",
+  "theme_color": "#0066FF",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

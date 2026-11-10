@@ -1,0 +1,8 @@
+server/node_modules
+client/node_modules
+server/uploads
+docs
+references
+**/*.md
+!DEPLOY.md
+.git
