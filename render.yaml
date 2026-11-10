@@ -7,6 +7,7 @@ services:
     # Install with devDependencies so `tsc` is available even when NODE_ENV=production
     buildCommand: NPM_CONFIG_PRODUCTION=false npm install && npm run build
     startCommand: npm run start
+    # Dashboard Start Command must be `npm run start` (or `npm run start:server`)
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
