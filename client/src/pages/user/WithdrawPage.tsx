@@ -297,7 +297,7 @@ export function WithdrawPage() {
             </div>
             {isUsdtMethod ? (
               <div className="flex justify-between py-1 text-xs">
-                <span className="text-brand-muted">≈ USDT payout (rate ₹{getUsdtInrRate()})</span>
+                <span className="text-brand-muted">≈ USDT payout (rate Rs. {getUsdtInrRate()})</span>
                 <span className="font-semibold text-brand-primary">{formatUSDT(payoutUsdt)}</span>
               </div>
             ) : (

@@ -697,7 +697,7 @@ export function AdminRechargesPage() {
                   {(r.methodCode || 'manual').toUpperCase()}
                   {r.network ? ` · ${r.network}` : ''}
                   {r.depositSnapshot?.usdtInrRate
-                    ? ` · Rate 1 USDT = ₹${r.depositSnapshot.usdtInrRate}`
+                    ? ` · Rate 1 USDT = Rs. ${r.depositSnapshot.usdtInrRate}`
                     : ''}
                 </p>
                 {r.proofReference ? (
@@ -789,7 +789,7 @@ export function AdminWithdrawalsPage() {
                 <p className="text-xs text-brand-muted">
                   From {(w.walletType || 'income').toUpperCase()} wallet · {(w.methodCode || 'bank').toUpperCase()}
                   {w.destinationBankSnapshot?.usdtInrRate
-                    ? ` · Rate 1 USDT = ₹${w.destinationBankSnapshot.usdtInrRate}`
+                    ? ` · Rate 1 USDT = Rs. ${w.destinationBankSnapshot.usdtInrRate}`
                     : ''}
                 </p>
                 {w.destinationAddress ? (
@@ -865,6 +865,7 @@ export function AdminPaymentMethodsPage() {
     id: string
     depositAddress?: string
     upiId?: string
+    qrCodeUrl?: string
     depositInstructions?: string
     withdrawInstructions?: string
     minDeposit?: number
@@ -884,6 +885,7 @@ export function AdminPaymentMethodsPage() {
     setForm({
       depositAddress: m.depositAddress || '',
       upiId: m.upiId || '',
+      qrCodeUrl: m.qrCodeUrl || '',
       depositInstructions: m.depositInstructions || '',
       withdrawInstructions: m.withdrawInstructions || '',
       minDeposit: String(m.minDeposit ?? ''),
@@ -918,6 +920,7 @@ export function AdminPaymentMethodsPage() {
           status: string
           depositAddress?: string
           upiId?: string
+          qrCodeUrl?: string
         }) => (
           <Card key={m.id} className="space-y-3">
             <div className="flex items-center gap-3">
@@ -927,6 +930,7 @@ export function AdminPaymentMethodsPage() {
                 <p className="text-xs text-brand-muted">
                   {m.code.toUpperCase()}
                   {m.network ? ` · ${m.network}` : ''}
+                  {m.qrCodeUrl ? ' · QR set' : ''}
                 </p>
               </div>
               <StatusBadge status={m.status} />
@@ -975,6 +979,32 @@ export function AdminPaymentMethodsPage() {
                     onChange={(e) => setForm((f) => ({ ...f, upiId: e.target.value }))}
                   />
                 )}
+                {(m.code === 'bep20' || m.code === 'trc20' || m.code === 'inr_upi') && (
+                  <div className="space-y-2">
+                    <Input
+                      label="QR / Barcode Image URL"
+                      placeholder="https://…/qr.png"
+                      value={form.qrCodeUrl}
+                      onChange={(e) => setForm((f) => ({ ...f, qrCodeUrl: e.target.value }))}
+                    />
+                    {form.qrCodeUrl ? (
+                      <div className="flex justify-center rounded-2xl bg-white p-3">
+                        <img
+                          src={form.qrCodeUrl}
+                          alt="QR preview"
+                          className="h-36 w-36 rounded-xl object-contain"
+                          onError={(e) => {
+                            ;(e.target as HTMLImageElement).style.display = 'none'
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-[11px] text-brand-muted">
+                        Paste a public image URL (Cloudinary / Imgur / CDN). Shown on user deposit page.
+                      </p>
+                    )}
+                  </div>
+                )}
                 {m.code === 'inr_bank' && (
                   <>
                     <Input label="Bank Name" value={form.bankName} onChange={(e) => setForm((f) => ({ ...f, bankName: e.target.value }))} />
@@ -1001,6 +1031,7 @@ export function AdminPaymentMethodsPage() {
                         await updateAdminPaymentMethod(m.id, {
                           depositAddress: form.depositAddress || undefined,
                           upiId: form.upiId || undefined,
+                          qrCodeUrl: form.qrCodeUrl?.trim() || '',
                           depositInstructions: form.depositInstructions,
                           withdrawInstructions: form.withdrawInstructions,
                           minDeposit: Number(form.minDeposit) || undefined,

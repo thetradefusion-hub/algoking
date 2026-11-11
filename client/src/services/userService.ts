@@ -56,6 +56,7 @@ export type PaymentMethod = {
   network?: string
   currency: string
   iconUrl: string
+  qrCodeUrl?: string
   depositEnabled: boolean
   withdrawEnabled: boolean
   depositAddress?: string

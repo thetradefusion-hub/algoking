@@ -6,14 +6,14 @@ import {
   usdtToInr,
 } from '@/lib/currencyStore'
 
-/** Always format as INR (rupees), ignoring project currency. */
+/** Always format as INR (rupees), ignoring project currency. Uses "Rs. " + spaced amount. */
 export function formatAsINR(amount?: number | null) {
   const valueInr = Number(amount || 0)
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
+  const number = new Intl.NumberFormat('en-IN', {
     maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
   }).format(valueInr)
+  return `Rs. ${number}`
 }
 
 /**
@@ -45,7 +45,7 @@ export function formatMoney(amount?: number | null, forceCurrency?: ProjectCurre
   return formatAsINR(valueInr)
 }
 
-/** Show primary + conversion hint, e.g. "₹9,000 · ≈ 100 USDT" */
+/** Show primary + conversion hint, e.g. "Rs. 9,000 · ≈ 100 USDT" */
 export function formatMoneyWithConversion(amountInr?: number | null) {
   const { projectCurrency, usdtInrRate } = getCurrencyConfig()
   const value = Number(amountInr || 0)

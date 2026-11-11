@@ -83,7 +83,7 @@ export function PlansPage() {
               ) : null}
             </div>
           </div>
-          <p className="mt-2 text-[10px] text-white/60">1 USDT = ₹{getUsdtInrRate()}</p>
+          <p className="mt-2 text-[10px] text-white/60">1 USDT = Rs. {getUsdtInrRate()}</p>
         </div>
       </div>
 

@@ -99,6 +99,7 @@ export function sanitizeMethod(m: IPaymentMethod, forAdmin = false) {
     network: m.network,
     currency: m.currency,
     iconUrl: m.iconUrl,
+    qrCodeUrl: m.qrCodeUrl || '',
     depositEnabled: m.depositEnabled,
     withdrawEnabled: m.withdrawEnabled,
     depositAddress: m.depositAddress,

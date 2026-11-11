@@ -10,6 +10,8 @@ export interface IPaymentMethod extends Document {
   network?: string;
   currency: string;
   iconUrl: string;
+  /** Public image URL for deposit QR / barcode (USDT / UPI). */
+  qrCodeUrl?: string;
   depositEnabled: boolean;
   withdrawEnabled: boolean;
   depositAddress?: string;
@@ -47,6 +49,7 @@ const paymentMethodSchema = new Schema<IPaymentMethod>(
     network: { type: String },
     currency: { type: String, required: true },
     iconUrl: { type: String, required: true },
+    qrCodeUrl: { type: String, default: '' },
     depositEnabled: { type: Boolean, default: true },
     withdrawEnabled: { type: Boolean, default: true },
     depositAddress: { type: String },

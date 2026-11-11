@@ -126,7 +126,7 @@ export function RechargePage() {
                   Number(amount) === q ? 'brand-gradient text-white' : 'bg-brand-bg text-brand-muted'
                 )}
               >
-                {isUsdtMethod ? `${q} USDT` : `₹${q.toLocaleString('en-IN')}`}
+                {isUsdtMethod ? `${q} USDT` : `Rs. ${q.toLocaleString('en-IN')}`}
               </button>
             ))}
           </div>
@@ -138,7 +138,7 @@ export function RechargePage() {
                   {' · '}Wallet credit ≈{' '}
                   <span className="font-semibold text-brand-text">{formatINR(creditInr)}</span>
                   <span className="mt-0.5 block text-[11px]">
-                    Rate: 1 USDT = ₹{getUsdtInrRate()} · Display: {projectCurrency}
+                    Rate: 1 USDT = Rs. {getUsdtInrRate()} · Display: {projectCurrency}
                   </span>
                 </p>
               ) : (
@@ -193,6 +193,21 @@ export function RechargePage() {
           {selected ? (
             <div className="space-y-3 rounded-2xl border border-dashed border-brand-primary/20 bg-brand-bg/60 p-3">
               <p className="text-xs font-semibold text-brand-text">Pay to this account</p>
+              {selected.qrCodeUrl ? (
+                <div className="rounded-2xl bg-white p-4 text-center">
+                  <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-brand-muted">
+                    Scan QR / Barcode
+                  </p>
+                  <img
+                    src={selected.qrCodeUrl}
+                    alt={`${selected.name} QR`}
+                    className="mx-auto h-44 w-44 rounded-2xl object-contain ring-1 ring-brand-primary/10"
+                  />
+                  <p className="mt-2 text-[11px] text-brand-muted">
+                    Scan with your {selected.code === 'inr_upi' ? 'UPI' : 'USDT'} app
+                  </p>
+                </div>
+              ) : null}
               {selected.depositAddress ? (
                 <div className="rounded-2xl bg-white p-3">
                   <p className="text-[10px] text-brand-muted">{selected.network} Address</p>

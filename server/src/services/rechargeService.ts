@@ -250,6 +250,7 @@ export async function submitManualDeposit(
       currency: method.currency,
       depositAddress: method.depositAddress,
       upiId: method.upiId,
+      qrCodeUrl: method.qrCodeUrl,
       bankDetails: method.bankDetails,
       iconUrl: method.iconUrl,
       originalAmount,

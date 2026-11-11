@@ -139,7 +139,7 @@ export function InvestmentPlanCard({ plan, index = 0 }: { plan: Plan; index?: nu
           </div>
         </div>
         <p className="mt-2 text-center text-[10px] text-brand-muted">
-          Conversion rate: 1 USDT = ₹{getUsdtInrRate()}
+          Conversion rate: 1 USDT = Rs. {getUsdtInrRate()}
         </p>
       </div>
 

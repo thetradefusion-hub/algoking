@@ -356,7 +356,7 @@ export function AdminSettingsPage() {
                 value={form.projectCurrency}
                 onChange={(e) => set('projectCurrency', e.target.value as 'INR' | 'USDT')}
               >
-                <option value="INR">INR (₹)</option>
+                <option value="INR">INR (Rs.)</option>
                 <option value="USDT">USDT</option>
               </select>
             </label>
@@ -371,11 +371,12 @@ export function AdminSettingsPage() {
           </div>
           <div className="rounded-2xl bg-brand-bg p-3 text-sm text-brand-muted">
             <p>
-              Rate preview: <span className="font-semibold text-brand-text">1 USDT = ₹{rate}</span>
+              Rate preview:{' '}
+              <span className="font-semibold text-brand-text">1 USDT = Rs. {rate}</span>
             </p>
             <p className="mt-1">
-              100 USDT = ₹{(100 * rate).toLocaleString('en-IN')} · ₹9,000 = {(9000 / rate).toFixed(4)}{' '}
-              USDT
+              100 USDT = Rs. {(100 * rate).toLocaleString('en-IN')} · Rs. 9,000 ={' '}
+              {(9000 / rate).toFixed(4)} USDT
             </p>
             <p className="mt-1">
               Affects: wallet balances, deposit/withdraw screens, USDT method conversion

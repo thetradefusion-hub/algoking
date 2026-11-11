@@ -79,7 +79,7 @@ export function PlanDetailsPage() {
           </div>
         </div>
         <p className="text-center text-[11px] text-brand-muted">
-          Conversion rate: 1 USDT = ₹{getUsdtInrRate()}
+          Conversion rate: 1 USDT = Rs. {getUsdtInrRate()}
         </p>
         {plan.riskDisclosure ? (
           <div className="rounded-2xl border border-brand-primary/15 bg-brand-primary/5 p-3 text-sm text-brand-text">

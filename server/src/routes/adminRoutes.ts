@@ -682,6 +682,7 @@ router.put(
     body: z.object({
       name: z.string().min(2).optional(),
       iconUrl: z.string().min(1).optional(),
+      qrCodeUrl: z.string().max(2000).optional(),
       depositEnabled: z.boolean().optional(),
       withdrawEnabled: z.boolean().optional(),
       depositAddress: z.string().optional(),
