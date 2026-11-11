@@ -7,7 +7,11 @@ import { Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
 import { getErrorMessage, useAuth } from '@/context/AuthContext'
+import { baseURL } from '@/services/api'
 import { cn } from '@/lib/utils'
+
+const apiMisconfigured =
+  import.meta.env.PROD && (/localhost|127\.0\.0\.1/i.test(baseURL) || baseURL === '/api/v1')
 
 const schema = z.object({
   identifier: z.string().min(3, 'Enter email or mobile'),
@@ -46,6 +50,14 @@ export function LoginPage() {
         <h2 className="text-2xl font-extrabold tracking-tight text-brand-text">Sign In</h2>
         <p className="mt-1.5 text-sm text-brand-muted">Access your AlgoKing account</p>
       </div>
+
+      {apiMisconfigured ? (
+        <div className="mb-4 rounded-2xl border border-brand-danger/30 bg-brand-danger/10 px-3 py-2.5 text-left text-xs text-brand-danger">
+          API URL not configured for production. In Vercel set{' '}
+          <span className="font-semibold">VITE_API_BASE_URL</span> to your Railway/Render API
+          (…/api/v1), then Redeploy. Current: {baseURL}
+        </div>
+      ) : null}
 
       <form className="space-y-4" onSubmit={onSubmit}>
         <label className="block space-y-1.5">

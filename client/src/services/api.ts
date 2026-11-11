@@ -1,8 +1,29 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 
-const baseURL =
-  import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.PROD ? '/api/v1' : 'http://localhost:5000/api/v1')
+function resolveApiBaseUrl() {
+  const fromEnv = String(import.meta.env.VITE_API_BASE_URL || '').trim()
+  const isLocal =
+    !fromEnv ||
+    /localhost|127\.0\.0\.1/i.test(fromEnv)
+
+  // Production builds must never call the developer's machine.
+  if (import.meta.env.PROD) {
+    if (!fromEnv || isLocal) {
+      console.error(
+        '[AlgoKing] VITE_API_BASE_URL is missing or points to localhost. ' +
+          'Set it in Vercel → Settings → Environment Variables to your Railway/Render API, e.g. ' +
+          'https://your-api.up.railway.app/api/v1 — then Redeploy.'
+      )
+      // Prefer relative path over localhost so the failure is obvious in Network tab.
+      return fromEnv && !isLocal ? fromEnv.replace(/\/$/, '') : '/api/v1'
+    }
+    return fromEnv.replace(/\/$/, '')
+  }
+
+  return (fromEnv || 'http://localhost:5000/api/v1').replace(/\/$/, '')
+}
+
+export const baseURL = resolveApiBaseUrl()
 
 export const api = axios.create({
   baseURL,

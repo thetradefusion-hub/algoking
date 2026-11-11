@@ -59,16 +59,30 @@ npm run create-admin
 
 1. [Vercel](https://vercel.com) → Add New Project → import GitHub repo
 2. Vercel auto-reads root `vercel.json` (builds `client/`)
-3. Environment Variables:
+3. Environment Variables (**Production** + Preview).  
+   **Do not** set `VITE_API_BASE_URL` to `localhost` — Vite bakes this in at build time.
 
 | Key | Value |
 |---|---|
-| `VITE_API_BASE_URL` | `https://YOUR_API_HOST/api/v1` |
+| `VITE_API_BASE_URL` | `https://YOUR_RAILWAY_OR_RENDER_HOST/api/v1` |
 | `VITE_APP_NAME` | `AlgoKing` |
 | `VITE_PLATFORM_MODE` | `DEMO` |
 
-4. Deploy → copy the Vercel URL
-5. Update API `CLIENT_URL` / `ALLOWED_ORIGINS` to that Vercel URL, then restart API
+4. **Redeploy** after saving env vars (required — old build still has localhost)
+5. Copy the Vercel URL (e.g. `https://algoking.vercel.app`)
+6. On Railway/Render API set:
+   - `CLIENT_URL=https://algoking.vercel.app`
+   - `ALLOWED_ORIGINS=https://algoking.vercel.app`
+   - `ALLOW_VERCEL_PREVIEWS=true`
+   - `COOKIE_SECURE=true`
+   - `COOKIE_SAME_SITE=none`
+   then restart the API
+
+### Login still fails? Check
+- Browser Network tab: requests must go to Railway/Render, **not** `localhost:5000`
+- API `/health` opens in browser
+- MongoDB Atlas allows Railway/Render IPs (or `0.0.0.0/0` for demo)
+- Admin user exists (`npm run create-admin` / seed on the server)
 
 ## 4. Checklist
 
