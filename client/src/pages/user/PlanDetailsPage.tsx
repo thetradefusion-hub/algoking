@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { fetchPlan, fetchWallets, purchasePlan } from '@/services/userService'
-import { formatINR } from '@/lib/format'
+import { formatAlternateCurrency, formatINR, getUsdtInrRate } from '@/lib/format'
 import { getErrorMessage } from '@/services/api'
 import { idempotencyKey } from '@/lib/utils'
 
@@ -55,20 +55,32 @@ export function PlanDetailsPage() {
           <div className="rounded-2xl bg-brand-bg p-3">
             <p className="text-brand-muted">Investment</p>
             <p className="text-lg font-bold">{formatINR(plan.investmentAmount)}</p>
+            <p className="mt-0.5 text-[11px] text-brand-muted">
+              {formatAlternateCurrency(plan.investmentAmount)}
+            </p>
           </div>
           <div className="rounded-2xl bg-brand-bg p-3">
             <p className="text-brand-muted">Duration</p>
             <p className="text-lg font-bold">{plan.durationDays} days</p>
           </div>
           <div className="rounded-2xl bg-brand-bg p-3">
-            <p className="text-brand-muted">Daily Income</p>
+            <p className="text-brand-muted">Daily Profit</p>
             <p className="font-bold">{formatINR(plan.projectedDailyIncome)}</p>
+            <p className="mt-0.5 text-[11px] text-brand-muted">
+              {formatAlternateCurrency(plan.projectedDailyIncome)}
+            </p>
           </div>
           <div className="rounded-2xl bg-brand-bg p-3">
-            <p className="text-brand-muted">Total Return</p>
+            <p className="text-brand-muted">Total Profit</p>
             <p className="font-bold">{formatINR(plan.projectedTotalIncome)}</p>
+            <p className="mt-0.5 text-[11px] text-brand-muted">
+              {formatAlternateCurrency(plan.projectedTotalIncome)}
+            </p>
           </div>
         </div>
+        <p className="text-center text-[11px] text-brand-muted">
+          Conversion rate: 1 USDT = ₹{getUsdtInrRate()}
+        </p>
         {plan.riskDisclosure ? (
           <div className="rounded-2xl border border-brand-primary/15 bg-brand-primary/5 p-3 text-sm text-brand-text">
             {plan.riskDisclosure}

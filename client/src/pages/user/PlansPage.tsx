@@ -5,7 +5,7 @@ import { InvestmentPlanCard } from '@/components/user/InvestmentPlanCard'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { fetchPlans, fetchPublicSettings } from '@/services/userService'
-import { formatINR } from '@/lib/format'
+import { formatAlternateCurrency, formatINR, getUsdtInrRate } from '@/lib/format'
 import type { Plan } from '@/types'
 import { cn } from '@/lib/utils'
 
@@ -67,14 +67,23 @@ export function PlansPage() {
               <p className="mt-0.5 text-sm font-bold leading-tight">
                 {highlight ? formatINR(highlight.investmentAmount) : '—'}
               </p>
+              {highlight ? (
+                <p className="mt-0.5 text-[9px] text-white/65">
+                  {formatAlternateCurrency(highlight.investmentAmount)}
+                </p>
+              ) : null}
             </div>
             <div className="rounded-2xl bg-white/12 p-3 ring-1 ring-white/15 backdrop-blur-sm">
-              <p className="text-[10px] text-white/70">Top Daily</p>
+              <p className="text-[10px] text-white/70">Top Daily Profit</p>
               <p className="mt-0.5 text-sm font-bold leading-tight text-brand-gold">
                 {maxDaily ? formatINR(maxDaily) : '—'}
               </p>
+              {maxDaily ? (
+                <p className="mt-0.5 text-[9px] text-white/65">{formatAlternateCurrency(maxDaily)}</p>
+              ) : null}
             </div>
           </div>
+          <p className="mt-2 text-[10px] text-white/60">1 USDT = ₹{getUsdtInrRate()}</p>
         </div>
       </div>
 

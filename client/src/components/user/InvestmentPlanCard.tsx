@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, CalendarDays, Crown, Layers3, TrendingUp } from 'lucide-react'
 import type { Plan } from '@/types'
-import { formatINR } from '@/lib/format'
+import { formatAlternateCurrency, formatINR, getUsdtInrRate } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
 const tierStyles = [
@@ -95,7 +95,7 @@ export function InvestmentPlanCard({ plan, index = 0 }: { plan: Plan; index?: nu
               </div>
             </div>
 
-            <div className="mt-2 flex items-center gap-3 text-[11px] text-brand-muted">
+            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-brand-muted">
               <span className="inline-flex items-center gap-1">
                 <CalendarDays className="h-3.5 w-3.5" />
                 {plan.durationDays} Days
@@ -104,30 +104,43 @@ export function InvestmentPlanCard({ plan, index = 0 }: { plan: Plan; index?: nu
                 <TrendingUp className="h-3.5 w-3.5 text-brand-success" />
                 {formatINR(plan.projectedDailyIncome)}/day
               </span>
+              <span className="text-[10px]">{formatAlternateCurrency(plan.projectedDailyIncome)}</span>
             </div>
           </div>
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2">
-          <div className="rounded-2xl bg-brand-bg px-2.5 py-3 text-center">
+          <div className="rounded-2xl bg-brand-bg px-2 py-3 text-center">
             <p className="text-[10px] font-medium text-brand-muted">Invest</p>
-            <p className="mt-1 text-[13px] font-bold leading-tight text-brand-text">
+            <p className="mt-1 text-[12px] font-bold leading-tight text-brand-text">
               {formatINR(plan.investmentAmount)}
             </p>
-          </div>
-          <div className="rounded-2xl bg-[#E6F7EF] px-2.5 py-3 text-center">
-            <p className="text-[10px] font-medium text-brand-muted">Daily</p>
-            <p className="mt-1 text-[13px] font-bold leading-tight text-brand-success">
-              {formatINR(plan.projectedDailyIncome)}
+            <p className="mt-0.5 text-[9px] leading-tight text-brand-muted">
+              {formatAlternateCurrency(plan.investmentAmount)}
             </p>
           </div>
-          <div className="rounded-2xl bg-[#E7F1FF] px-2.5 py-3 text-center">
-            <p className="text-[10px] font-medium text-brand-muted">Total</p>
-            <p className="mt-1 text-[13px] font-bold leading-tight text-brand-primary">
+          <div className="rounded-2xl bg-[#E6F7EF] px-2 py-3 text-center">
+            <p className="text-[10px] font-medium text-brand-muted">Daily Profit</p>
+            <p className="mt-1 text-[12px] font-bold leading-tight text-brand-success">
+              {formatINR(plan.projectedDailyIncome)}
+            </p>
+            <p className="mt-0.5 text-[9px] leading-tight text-brand-muted">
+              {formatAlternateCurrency(plan.projectedDailyIncome)}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-[#E7F1FF] px-2 py-3 text-center">
+            <p className="text-[10px] font-medium text-brand-muted">Total Profit</p>
+            <p className="mt-1 text-[12px] font-bold leading-tight text-brand-primary">
               {formatINR(plan.projectedTotalIncome)}
+            </p>
+            <p className="mt-0.5 text-[9px] leading-tight text-brand-muted">
+              {formatAlternateCurrency(plan.projectedTotalIncome)}
             </p>
           </div>
         </div>
+        <p className="mt-2 text-center text-[10px] text-brand-muted">
+          Conversion rate: 1 USDT = ₹{getUsdtInrRate()}
+        </p>
       </div>
 
       <div className="px-4 pb-4">
