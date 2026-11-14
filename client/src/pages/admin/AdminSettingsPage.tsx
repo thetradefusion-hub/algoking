@@ -71,7 +71,7 @@ const EMPTY: FormState = {
   maxWithdrawal: '50000',
   withdrawalFee: '0',
   withdrawalProcessingTime: '1-3 business days',
-  paymentGatewayMode: 'DEMO',
+  paymentGatewayMode: 'LIVE',
   terms: '',
   privacy: '',
   dashboardBanner: '',
@@ -98,7 +98,7 @@ function fromSettings(data?: Record<string, unknown> | null): FormState {
     maxWithdrawal: String(data.maxWithdrawal ?? 50000),
     withdrawalFee: String(data.withdrawalFee ?? 0),
     withdrawalProcessingTime: String(data.withdrawalProcessingTime || '1-3 business days'),
-    paymentGatewayMode: String(data.paymentGatewayMode || 'DEMO'),
+    paymentGatewayMode: String(data.paymentGatewayMode || 'LIVE'),
     terms: String(data.terms || ''),
     privacy: String(data.privacy || ''),
     dashboardBanner: String(data.dashboardBanner || ''),
@@ -463,13 +463,9 @@ export function AdminSettingsPage() {
                 value={form.paymentGatewayMode}
                 onChange={(e) => set('paymentGatewayMode', e.target.value)}
               >
-                <option value="DEMO">DEMO</option>
                 <option value="LIVE">LIVE</option>
               </select>
             </label>
-          </div>
-          <div className="rounded-2xl border border-brand-warning/30 bg-brand-warning/10 px-4 py-3 text-sm text-[#9a6510]">
-            LIVE mode does not enable real bank payouts by itself — withdrawals still require compliance-safe flows.
           </div>
         </Card>
       ) : null}

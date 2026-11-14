@@ -192,7 +192,7 @@ export async function purchasePlan(userId: string, planId: string, idempotencyKe
           {
             userId,
             title: 'Investment Purchased',
-            message: `You invested in ${plan.name}. Projected income is non-guaranteed and demo-labeled until compliance review.`,
+            message: `You invested in ${plan.name}. Projected income is non-guaranteed — invest responsibly.`,
             type: 'investment_purchased',
             meta: { orderId: order!.orderId },
           },
@@ -245,7 +245,7 @@ async function distributeInvestmentCommissions(opts: {
         walletType: 'referral',
         type: 'credit',
         amount: commissionAmount,
-        description: `Level ${link.level} referral commission (simulated/demo)`,
+        description: `Level ${link.level} referral commission`,
         referenceType: 'commission',
         referenceId: opts.sourceTransactionId,
         idempotencyKey: `comm-${opts.sourceTransactionId}-L${link.level}`,
@@ -275,7 +275,7 @@ async function distributeInvestmentCommissions(opts: {
           {
             userId: link.sponsorId,
             title: 'Referral Commission',
-            message: `You received a Level ${link.level} commission of ₹${commissionAmount} (demo/simulated).`,
+            message: `You received a Level ${link.level} commission of Rs. ${commissionAmount}.`,
             type: 'referral_commission',
           },
         ],

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { randomUUID } from 'crypto';
-import { env, isDemoMode } from '../config/env.js';
+import { env } from '../config/env.js';
 import { RechargeRequest } from '../models/RechargeRequest.js';
 import { PaymentTransaction } from '../models/PaymentTransaction.js';
 import { Notification } from '../models/Notification.js';
@@ -8,15 +8,14 @@ import { ApiError } from '../utils/apiError.js';
 import { applyLedgerEntry, ensureUserWallets } from './walletService.js';
 import { getWalletLimits } from './settingsService.js';
 
-/** Adapter-based payment gateway (demo sandbox by default). */
+/** Adapter-based payment gateway (manual/UPI flow by default until Razorpay is wired). */
 export async function createPaymentOrder(amount: number, userId: string) {
   const provider = env.PAYMENT_GATEWAY;
-  const providerOrderId = `demo_order_${randomUUID()}`;
+  const providerOrderId = `order_${randomUUID()}`;
 
-  if (provider === 'razorpay' && !isDemoMode() && env.RAZORPAY_KEY_ID) {
+  if (provider === 'razorpay' && env.RAZORPAY_KEY_ID) {
     // Placeholder: real Razorpay order creation would go here with server-side keys only.
-    // LIVE mode must stay disabled until compliance review.
-    throw ApiError.badRequest('LIVE Razorpay mode is disabled until compliance review. Use DEMO mode.');
+    throw ApiError.badRequest('Razorpay checkout is not configured yet. Use UPI/USDT deposit with admin approval.');
   }
 
   return {
@@ -24,9 +23,8 @@ export async function createPaymentOrder(amount: number, userId: string) {
     providerOrderId,
     amount,
     currency: 'INR',
-    // Demo client can "confirm" via verify endpoint; webhook also supported
-    demoCheckoutToken: providerOrderId,
-    keyId: isDemoMode() ? 'demo_key' : env.RAZORPAY_KEY_ID,
+    checkoutToken: providerOrderId,
+    keyId: env.RAZORPAY_KEY_ID || undefined,
     userId,
   };
 }
@@ -102,7 +100,7 @@ export async function confirmRechargePayment(opts: {
       }
 
       payment.status = 'paid';
-      payment.providerPaymentId = opts.providerPaymentId || `demo_pay_${randomUUID()}`;
+      payment.providerPaymentId = opts.providerPaymentId || `pay_${randomUUID()}`;
       payment.verifiedAt = new Date();
       payment.rawReference = opts.rawReference;
       await payment.save({ session });
@@ -138,7 +136,7 @@ export async function confirmRechargePayment(opts: {
           {
             userId: recharge.userId,
             title: 'Deposit Successful',
-            message: `₹${recharge.amount}${originalUsdt} credited to Main Wallet${isDemoMode() ? ' (demo)' : ''}.`,
+            message: `Rs. ${recharge.amount}${originalUsdt} credited to Main Wallet.`,
             type: 'recharge_successful',
           },
         ],
@@ -153,17 +151,18 @@ export async function confirmRechargePayment(opts: {
   }
 }
 
+/** Local/dev self-confirm for gateway adapter when Razorpay is not connected. */
 export async function verifyDemoPayment(userId: string, providerOrderId: string) {
-  if (!isDemoMode() && env.PAYMENT_GATEWAY !== 'demo') {
-    throw ApiError.forbidden('Demo verification only available in DEMO mode');
+  if (env.NODE_ENV === 'production' && env.PAYMENT_GATEWAY !== 'demo') {
+    throw ApiError.forbidden('Self-verify is not available');
   }
   const payment = await PaymentTransaction.findOne({ providerOrderId, userId });
   if (!payment) throw ApiError.notFound('Payment not found');
   return confirmRechargePayment({
     providerOrderId,
     signatureValid: true,
-    providerPaymentId: `demo_pay_${randomUUID()}`,
-    rawReference: { mode: 'DEMO', verifiedBy: 'demo_adapter' },
+    providerPaymentId: `pay_${randomUUID()}`,
+    rawReference: { mode: 'adapter', verifiedBy: 'checkout_adapter' },
   });
 }
 

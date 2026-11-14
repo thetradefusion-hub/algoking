@@ -47,6 +47,13 @@ export function createApp() {
       origin(origin, callback) {
         if (!origin) return callback(null, true);
         if (allowedOrigins.includes(origin)) return callback(null, true);
+        // Local Vite may bind 5173/5174/… — allow any localhost origin in development
+        if (
+          env.NODE_ENV !== 'production' &&
+          /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin)
+        ) {
+          return callback(null, true);
+        }
         if (env.ALLOW_VERCEL_PREVIEWS && /\.vercel\.app$/i.test(new URL(origin).hostname)) {
           return callback(null, true);
         }

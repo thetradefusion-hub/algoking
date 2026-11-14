@@ -41,7 +41,7 @@ git push -u origin main
 | `ALLOW_VERCEL_PREVIEWS` | `true` |
 | `COOKIE_SECURE` | `true` |
 | `COOKIE_SAME_SITE` | `none` |
-| `PLATFORM_MODE` | `DEMO` |
+| `PLATFORM_MODE` | `LIVE` |
 | `NODE_ENV` | `production` |
 
 5. After deploy, note API URL e.g. `https://algoking-api.onrender.com`
@@ -66,7 +66,7 @@ npm run create-admin
 |---|---|
 | `VITE_API_BASE_URL` | `https://YOUR_RAILWAY_OR_RENDER_HOST/api/v1` |
 | `VITE_APP_NAME` | `AlgoKing` |
-| `VITE_PLATFORM_MODE` | `DEMO` |
+| `VITE_PLATFORM_MODE` | `LIVE` |
 
 4. **Redeploy** after saving env vars (required — old build still has localhost)
 5. Copy the Vercel URL (e.g. `https://algoking.vercel.app`)

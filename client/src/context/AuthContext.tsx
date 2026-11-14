@@ -43,7 +43,7 @@ const IMPERSONATION_NAME_KEY = 'impersonationName'
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const [platformMode, setPlatformMode] = useState(import.meta.env.VITE_PLATFORM_MODE || 'DEMO')
+  const [platformMode, setPlatformMode] = useState(import.meta.env.VITE_PLATFORM_MODE || 'LIVE')
   const [isImpersonating, setIsImpersonating] = useState(
     () => !!localStorage.getItem(ADMIN_TOKEN_KEY)
   )

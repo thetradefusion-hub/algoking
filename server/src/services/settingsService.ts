@@ -8,6 +8,38 @@ export async function ensureDefaultSettings() {
       { upsert: true }
     );
   }
+
+  // Strip legacy mode-status copy from banners/tagline/terms if still present
+  const banner = await AppSetting.findOne({ key: 'dashboardBanner' }).lean();
+  if (banner && /demo\s*mode|live\s*mode\s*active/i.test(String(banner.value || ''))) {
+    await AppSetting.updateOne(
+      { key: 'dashboardBanner' },
+      { $set: { value: 'Welcome to AlgoKing — Grow Your Future.', category: 'content' } }
+    );
+  }
+  const tagline = await AppSetting.findOne({ key: 'tagline' }).lean();
+  if (tagline && /demo\s*mode|live\s*mode\s*active/i.test(String(tagline.value || ''))) {
+    await AppSetting.updateOne(
+      { key: 'tagline' },
+      { $set: { value: 'Grow Your Future.', category: 'general' } }
+    );
+  }
+  const terms = await AppSetting.findOne({ key: 'terms' }).lean();
+  if (terms && /demo terms|simulated until compliance/i.test(String(terms.value || ''))) {
+    await AppSetting.updateOne(
+      { key: 'terms' },
+      {
+        $set: {
+          value: 'AlgoKing terms of use. Please review all investment risks before participating.',
+          category: 'content',
+        },
+      }
+    );
+  }
+  await AppSetting.updateOne(
+    { key: 'paymentGatewayMode', value: 'DEMO' },
+    { $set: { value: 'LIVE' } }
+  );
 }
 
 export async function getSetting<T = unknown>(key: string, fallback?: T): Promise<T> {

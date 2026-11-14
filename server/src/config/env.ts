@@ -22,7 +22,7 @@ const envSchema = z.object({
     .optional()
     .transform((v) => v === 'true'),
   COOKIE_SAME_SITE: z.enum(['lax', 'none', 'strict']).optional().default('lax'),
-  PLATFORM_MODE: z.enum(['DEMO', 'LIVE']).default('DEMO'),
+  PLATFORM_MODE: z.enum(['DEMO', 'LIVE']).default('LIVE'),
   ENCRYPTION_KEY: z.string().min(32),
   UPLOAD_DIR: z.string().default('uploads'),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().default(900000),
@@ -67,7 +67,7 @@ export const env = (parsed.success
       ALLOW_VERCEL_PREVIEWS: false,
       COOKIE_SECURE: false,
       COOKIE_SAME_SITE: 'lax',
-      PLATFORM_MODE: 'DEMO',
+      PLATFORM_MODE: 'LIVE',
       ENCRYPTION_KEY: process.env.ENCRYPTION_KEY || '0123456789abcdef0123456789abcdef',
       UPLOAD_DIR: 'uploads',
       RATE_LIMIT_WINDOW_MS: 900000,

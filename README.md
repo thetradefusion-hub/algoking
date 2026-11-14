@@ -1,13 +1,13 @@
 # AlgoKing — Grow Your Future.
 
-Premium full-stack investment & referral platform (DEMO mode by default).
+Premium full-stack investment & referral platform.
 
 - **User app**: mobile-first fintech UI (max-width ~480px)
 - **Admin panel**: desktop sidebar control center
 - **API**: Node.js + Express + MongoDB (Mongoose)
 - **Auth**: JWT access + HTTP-only refresh cookies + RBAC
 
-> All projected income, ROI, and commissions are **non-guaranteed / simulated** while `PLATFORM_MODE=DEMO`. LIVE payouts stay disabled until compliance review.
+> Projected income, ROI, and commissions are illustrative and non-guaranteed. Review risks before investing.
 
 ## Monorepo
 
@@ -78,7 +78,7 @@ Critical server vars:
 - `MONGODB_URI`
 - `JWT_ACCESS_SECRET` / `JWT_REFRESH_SECRET`
 - `ENCRYPTION_KEY` (32 chars for PAN/bank encryption)
-- `PLATFORM_MODE=DEMO`
+- `PLATFORM_MODE=LIVE`
 - `CLIENT_URL=http://localhost:5173`
 
 ## Core modules
@@ -120,4 +120,4 @@ npm run build
 - Backend: Node host (Railway / Render / VPS)
 - Database: MongoDB Atlas (replica set for transactions)
 - Set `COOKIE_SECURE=true` and strong secrets in production
-- Keep `PLATFORM_MODE=DEMO` until legal/payment compliance is complete
+- Keep payment gateway keys and compliance flows configured before enabling real payouts

@@ -66,7 +66,7 @@ async function buildReferralChain(newUserId: mongoose.Types.ObjectId, sponsorId:
     { userId: newUserId, sponsorId, level: 1, referralCodeUsed: code },
   ];
 
-  // Walk up sponsor hierarchy (max 3 levels demo default)
+  // Walk up sponsor hierarchy (max 3 levels)
   let currentSponsorId: mongoose.Types.ObjectId = sponsorId;
   for (let level = 2; level <= 3; level++) {
     const upline = await User.findById(currentSponsorId).select({ referredBy: 1 }).lean<{
@@ -251,9 +251,9 @@ export async function forgotPassword(email: string) {
   user.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000);
   await user.save();
 
-  // In DEMO mode return token for testing; LIVE would email it
+  // Return token in non-production for local testing; production would email it
   return {
-    resetToken: env.PLATFORM_MODE === 'DEMO' ? resetToken : null,
+    resetToken: env.NODE_ENV === 'production' ? null : resetToken,
     message: 'If the account exists, reset instructions were sent',
   };
 }

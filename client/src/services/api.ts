@@ -20,7 +20,12 @@ function resolveApiBaseUrl() {
     return fromEnv.replace(/\/$/, '')
   }
 
-  return (fromEnv || 'http://localhost:5000/api/v1').replace(/\/$/, '')
+  // Dev: use Vite proxy (`/api` → :5000) so any local port (5173/5174) avoids CORS issues.
+  // Set VITE_API_BASE_URL only when you intentionally want a direct API host.
+  if (fromEnv && !/localhost|127\.0\.0\.1/i.test(fromEnv)) {
+    return fromEnv.replace(/\/$/, '')
+  }
+  return '/api/v1'
 }
 
 export const baseURL = resolveApiBaseUrl()

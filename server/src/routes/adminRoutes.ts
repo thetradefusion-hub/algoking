@@ -510,7 +510,7 @@ router.post(
       req.body.payoutReference
     );
     await audit(req.user!.id, 'withdrawal.mark_paid', 'withdrawal', param(req, 'id'), req.body.reason, undefined, undefined, req.ip);
-    return sendSuccess(res, { withdrawal }, 'Withdrawal marked paid (demo)');
+    return sendSuccess(res, { withdrawal }, 'Withdrawal marked paid');
   })
 );
 

@@ -5,7 +5,6 @@ import { Notification } from '../models/Notification.js';
 import { ApiError } from '../utils/apiError.js';
 import { applyLedgerEntry, ensureUserWallets } from './walletService.js';
 import { getWalletLimits } from './settingsService.js';
-import { isDemoMode } from '../config/env.js';
 
 const WITHDRAW_WALLETS = ['main', 'income', 'referral'] as const;
 type WithdrawWallet = (typeof WITHDRAW_WALLETS)[number];
@@ -150,8 +149,8 @@ export async function requestWithdrawal(
             userId,
             title: 'Withdrawal Requested',
             message: isUsdtMethod
-              ? `Withdrawal of ₹${amountNum} from ${walletType} wallet (≈ ${payoutUsdt} USDT) submitted for admin approval${isDemoMode() ? ' (demo)' : ''}.`
-              : `Withdrawal of ₹${amountNum} from ${walletType} wallet submitted for admin approval${isDemoMode() ? ' (demo)' : ''}.`,
+              ? `Withdrawal of Rs. ${amountNum} from ${walletType} wallet (≈ ${payoutUsdt} USDT) submitted for admin approval.`
+              : `Withdrawal of Rs. ${amountNum} from ${walletType} wallet submitted for admin approval.`,
             type: 'withdrawal_requested',
           },
         ],
@@ -205,7 +204,7 @@ export async function approveWithdrawal(id: string, adminId: string) {
   await Notification.create({
     userId: wd.userId,
     title: 'Withdrawal Approved',
-    message: `Your withdrawal of ₹${wd.amount} was approved${isDemoMode() ? ' (demo)' : ''}.`,
+    message: `Your withdrawal of Rs. ${wd.amount} was approved.`,
     type: 'withdrawal_approved',
   });
   return wd;
@@ -259,24 +258,20 @@ export async function rejectWithdrawal(id: string, adminId: string, reason: stri
 }
 
 export async function markWithdrawalPaid(id: string, adminId: string, payoutReference: string) {
-  if (!isDemoMode()) {
-    // LIVE payouts must not execute until compliance — still allow status record only if explicitly needed later
-    throw ApiError.badRequest('LIVE payouts are disabled until compliance review. Stay in DEMO mode.');
-  }
   const wd = await WithdrawalRequest.findById(id);
   if (!wd) throw ApiError.notFound('Withdrawal not found');
   if (!['approved', 'processing'].includes(wd.status)) {
     throw ApiError.badRequest('Withdrawal must be approved/processing before mark paid');
   }
   wd.status = 'completed';
-  wd.payoutReference = payoutReference || `DEMO-PAYOUT-${Date.now()}`;
+  wd.payoutReference = payoutReference || `PAYOUT-${Date.now()}`;
   wd.reviewedBy = new mongoose.Types.ObjectId(adminId);
-  wd.internalNote = (wd.internalNote || '') + ' | DEMO payout recorded (no real bank transfer)';
+  wd.internalNote = (wd.internalNote || '') + ' | Payout marked paid by admin';
   await wd.save();
   await Notification.create({
     userId: wd.userId,
     title: 'Withdrawal Completed',
-    message: `Withdrawal marked paid (demo). Ref: ${wd.payoutReference}`,
+    message: `Withdrawal marked paid. Ref: ${wd.payoutReference}`,
     type: 'withdrawal_approved',
   });
   return wd;

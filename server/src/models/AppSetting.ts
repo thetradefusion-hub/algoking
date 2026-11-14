@@ -40,20 +40,20 @@ export const DEFAULT_SETTINGS: Array<{ key: string; value: unknown; category: st
   { key: 'maxWithdrawal', value: 50000, category: 'wallet' },
   { key: 'withdrawalFee', value: 0, category: 'wallet' },
   { key: 'withdrawalProcessingTime', value: '1-3 business days', category: 'wallet' },
-  { key: 'paymentGatewayMode', value: 'DEMO', category: 'payment' },
+  { key: 'paymentGatewayMode', value: 'LIVE', category: 'payment' },
   {
     key: 'terms',
-    value: 'AlgoKing demo terms. All activity is simulated until compliance approval.',
+    value: 'AlgoKing terms of use. Please review all investment risks before participating.',
     category: 'content',
   },
   {
     key: 'privacy',
-    value: 'AlgoKing privacy policy placeholder. Do not collect unnecessary personal data.',
+    value: 'AlgoKing privacy policy. We only collect data needed to operate your account and process transactions.',
     category: 'content',
   },
   {
     key: 'dashboardBanner',
-    value: 'Welcome to AlgoKing — Grow Your Future. Demo mode active.',
+    value: 'Welcome to AlgoKing — Grow Your Future.',
     category: 'content',
   },
   {
