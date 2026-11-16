@@ -304,7 +304,7 @@ export async function listUserOrders(
     InvestmentOrder.find(filter).sort({ createdAt: -1 }).skip(opts.skip).limit(opts.limit).lean(),
     InvestmentOrder.countDocuments(filter),
   ]);
-  return { items: items.map((item) => enrichOrderIncome(item as Record<string, unknown>)), total };
+  return { items: items.map((item) => enrichOrderIncome(item)), total };
 }
 
 export async function getUserOrder(userId: string, orderId: string) {
@@ -313,5 +313,5 @@ export async function getUserOrder(userId: string, orderId: string) {
     userId,
   }).lean();
   if (!order) throw ApiError.notFound('Order not found');
-  return enrichOrderIncome(order as Record<string, unknown>);
+  return enrichOrderIncome(order);
 }

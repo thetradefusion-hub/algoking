@@ -39,16 +39,27 @@ export function completedHoursElapsed(order: {
   return Math.min(totalHours, Math.floor((cappedNow - start) / MS_PER_HOUR));
 }
 
-export function enrichOrderIncome(order: Record<string, unknown>, now = new Date()) {
-  const totalIncome = getOrderTotalIncome(order as never);
-  const totalHours = getOrderTotalHours(order as never);
+type OrderIncomeSource = {
+  projectedIncomeSnapshot?: number;
+  durationDays?: number;
+  paidHours?: number;
+  totalIncomePaid?: number;
+  startDate?: Date | string | null;
+  endDate?: Date | string | null;
+  status?: string;
+  planSnapshot?: {
+    projectedTotalIncome?: number;
+    durationDays?: number;
+  };
+};
+
+export function enrichOrderIncome<T extends OrderIncomeSource>(order: T, now = new Date()) {
+  const totalIncome = getOrderTotalIncome(order);
+  const totalHours = getOrderTotalHours(order);
   const paidHours = Number(order.paidHours || 0);
   const totalIncomePaid = Number(order.totalIncomePaid || 0);
-  const start = order.startDate ? new Date(order.startDate as string).getTime() : now.getTime();
-  const end =
-    order.endDate
-      ? new Date(order.endDate as string).getTime()
-      : start + totalHours * MS_PER_HOUR;
+  const start = order.startDate ? new Date(order.startDate).getTime() : now.getTime();
+  const end = order.endDate ? new Date(order.endDate).getTime() : start + totalHours * MS_PER_HOUR;
   const elapsedMs = Math.min(Math.max(now.getTime() - start, 0), Math.max(end - start, 0));
   const progressPct =
     end > start ? Math.min(100, Math.max(0, Number(((elapsedMs / (end - start)) * 100).toFixed(2)))) : 0;
@@ -57,7 +68,7 @@ export function enrichOrderIncome(order: Record<string, unknown>, now = new Date
       ? Number(Math.min(totalIncome, (elapsedMs / (end - start)) * totalIncome).toFixed(4))
       : totalIncomePaid;
   const hourlyIncome = totalHours > 0 ? Number((totalIncome / totalHours).toFixed(6)) : 0;
-  const hoursDone = completedHoursElapsed(order as never, now);
+  const hoursDone = completedHoursElapsed(order, now);
   const nextHourAt =
     order.status === 'active' && hoursDone < totalHours && order.startDate
       ? new Date(start + (hoursDone + 1) * MS_PER_HOUR).toISOString()

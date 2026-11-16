@@ -58,7 +58,7 @@ export async function getUserDashboard(userId: string) {
   const referralWallet = walletMap.referral?.balance || 0;
 
   const activeOrders = await InvestmentOrder.find({ userId, status: 'active' }).lean();
-  const enrichedActive = activeOrders.map((o) => enrichOrderIncome(o as Record<string, unknown>));
+  const enrichedActive = activeOrders.map((o) => enrichOrderIncome(o));
   const liveRoiEarned = enrichedActive.reduce((sum, o) => sum + Number(o.liveEarned || 0), 0);
   const paidRoiOnActive = enrichedActive.reduce((sum, o) => sum + Number(o.totalIncomePaid || 0), 0);
   const roiProgressPct =
@@ -121,7 +121,7 @@ export async function getUserDashboard(userId: string) {
       incomeWalletBalance: incomeWallet,
     },
     plans,
-    recentOrders: recentOrders.map((o) => enrichOrderIncome(o as Record<string, unknown>)),
+    recentOrders: recentOrders.map((o) => enrichOrderIncome(o)),
     activeRoiOrders: enrichedActive.slice(0, 3),
     recentActivity: recentTxns,
     charts: {
