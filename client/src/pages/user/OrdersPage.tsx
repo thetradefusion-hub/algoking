@@ -16,6 +16,7 @@ import {
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { StatusBadge } from '@/components/ui/Badge'
+import { RoiIncomeProgress } from '@/components/user/RoiIncomeProgress'
 import { fetchOrder, fetchOrders } from '@/services/userService'
 import { formatDate, formatINR, formatShortDate } from '@/lib/format'
 import { cn } from '@/lib/utils'
@@ -28,15 +29,6 @@ const tabs = [
   { key: 'cancelled', label: 'Cancel', icon: XCircle },
 ]
 
-function progressPct(order: InvestmentOrder) {
-  if (!order.startDate || !order.endDate) return order.status === 'completed' ? 100 : 0
-  const start = new Date(order.startDate).getTime()
-  const end = new Date(order.endDate).getTime()
-  const now = Date.now()
-  if (end <= start) return order.status === 'completed' ? 100 : 0
-  return Math.min(100, Math.max(0, Math.round(((now - start) / (end - start)) * 100)))
-}
-
 function daysLeft(order: InvestmentOrder) {
   if (!order.endDate) return null
   const diff = Math.ceil((new Date(order.endDate).getTime() - Date.now()) / 86400000)
@@ -45,7 +37,11 @@ function daysLeft(order: InvestmentOrder) {
 
 export function OrdersPage() {
   const [tab, setTab] = useState('all')
-  const { data, isLoading } = useQuery({ queryKey: ['orders'], queryFn: () => fetchOrders() })
+  const { data, isLoading } = useQuery({
+    queryKey: ['orders'],
+    queryFn: () => fetchOrders(),
+    refetchInterval: 30_000,
+  })
   const orders: InvestmentOrder[] = data?.data || []
 
   const counts = useMemo(() => {
@@ -161,7 +157,6 @@ export function OrdersPage() {
             </div>
 
             {filtered.map((order, index) => {
-              const pct = progressPct(order)
               const left = daysLeft(order)
               return (
                 <Link
@@ -235,18 +230,9 @@ export function OrdersPage() {
                       </div>
                     </div>
 
-                    {order.status === 'active' && (
-                      <div className="mt-3">
-                        <div className="mb-1 flex items-center justify-between text-[10px] text-brand-muted">
-                          <span>Progress</span>
-                          <span className="font-semibold text-brand-primary">{pct}%</span>
-                        </div>
-                        <div className="h-2 overflow-hidden rounded-full bg-brand-bg">
-                          <div
-                            className="h-full rounded-full brand-gradient transition-all"
-                            style={{ width: `${pct}%` }}
-                          />
-                        </div>
+                    {(order.status === 'active' || order.status === 'completed') && (
+                      <div className="mt-3 rounded-2xl bg-brand-bg/80 p-2.5">
+                        <RoiIncomeProgress order={order} compact />
                       </div>
                     )}
 
@@ -275,6 +261,7 @@ export function OrderDetailsPage() {
     queryKey: ['order', id],
     queryFn: () => fetchOrder(id!),
     enabled: !!id,
+    refetchInterval: 30_000,
   })
 
   if (isLoading) {
@@ -288,7 +275,6 @@ export function OrderDetailsPage() {
 
   if (!order) return <div className="p-4 text-sm text-brand-danger">Order not found</div>
 
-  const pct = progressPct(order)
   const left = daysLeft(order)
 
   return (
@@ -343,17 +329,12 @@ export function OrderDetailsPage() {
             </div>
           </div>
 
-          {order.status === 'active' && (
-            <div className="mt-4">
-              <div className="mb-1.5 flex items-center justify-between text-xs">
-                <span className="text-brand-muted">Progress</span>
-                <span className="font-semibold text-brand-primary">
-                  {pct}%{left !== null && left > 0 ? ` · ${left}d left` : ''}
-                </span>
-              </div>
-              <div className="h-2.5 overflow-hidden rounded-full bg-brand-bg">
-                <div className="h-full rounded-full brand-gradient" style={{ width: `${pct}%` }} />
-              </div>
+          {(order.status === 'active' || order.status === 'completed') && (
+            <div className="mt-4 rounded-2xl border border-brand-success/15 bg-[#E6F7EF]/50 p-3">
+              <RoiIncomeProgress order={order} />
+              {order.status === 'active' && left !== null && left > 0 ? (
+                <p className="mt-2 text-center text-[11px] text-brand-muted">{left} days left</p>
+              ) : null}
             </div>
           )}
         </div>

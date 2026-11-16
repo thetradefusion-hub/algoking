@@ -35,7 +35,7 @@ const walletMeta: Record<
   },
   income: {
     label: 'Income Wallet',
-    hint: 'Daily plan earnings',
+    hint: 'Hourly ROI plan earnings',
     icon: HandCoins,
     accent: 'from-[#16A36A] to-[#0F8A56]',
   },
@@ -50,7 +50,11 @@ const walletMeta: Record<
 const walletOrder: Wallet['walletType'][] = ['main', 'income', 'referral']
 
 export function WalletOverviewPage() {
-  const { data, isLoading } = useQuery({ queryKey: ['wallets'], queryFn: fetchWallets })
+  const { data, isLoading } = useQuery({
+    queryKey: ['wallets'],
+    queryFn: fetchWallets,
+    refetchInterval: 30_000,
+  })
   const wallets = data?.wallets || []
   const totalBalance = wallets.reduce((sum, w) => sum + Number(w.balance || 0), 0)
   const totalIn = wallets.reduce((sum, w) => sum + Number(w.totalCredited || 0), 0)
@@ -207,10 +211,15 @@ export function WalletDetailPage() {
   const meta = walletMeta[walletType] || walletMeta.main
   const Icon = meta.icon
 
-  const wallets = useQuery({ queryKey: ['wallets'], queryFn: fetchWallets })
+  const wallets = useQuery({
+    queryKey: ['wallets'],
+    queryFn: fetchWallets,
+    refetchInterval: 30_000,
+  })
   const txns = useQuery({
     queryKey: ['wallet-txns', walletType],
     queryFn: () => fetchWalletTransactions(walletType),
+    refetchInterval: 30_000,
   })
   const wallet = wallets.data?.wallets?.find((w) => w.walletType === walletType)
   const transactions = txns.data?.data || []

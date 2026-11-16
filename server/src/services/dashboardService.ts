@@ -12,6 +12,7 @@ import { Notification } from '../models/Notification.js';
 import { UserKyc } from '../models/UserKyc.js';
 import { SupportTicket } from '../models/SupportTicket.js';
 import { ensureUserWallets } from './walletService.js';
+import { enrichOrderIncome } from './incomePayoutService.js';
 
 export async function getUserDashboard(userId: string) {
   await ensureUserWallets(userId);
@@ -56,6 +57,20 @@ export async function getUserDashboard(userId: string) {
   const incomeWallet = walletMap.income?.balance || 0;
   const referralWallet = walletMap.referral?.balance || 0;
 
+  const activeOrders = await InvestmentOrder.find({ userId, status: 'active' }).lean();
+  const enrichedActive = activeOrders.map((o) => enrichOrderIncome(o as Record<string, unknown>));
+  const liveRoiEarned = enrichedActive.reduce((sum, o) => sum + Number(o.liveEarned || 0), 0);
+  const paidRoiOnActive = enrichedActive.reduce((sum, o) => sum + Number(o.totalIncomePaid || 0), 0);
+  const roiProgressPct =
+    enrichedActive.length > 0
+      ? Number(
+          (
+            enrichedActive.reduce((sum, o) => sum + Number(o.progressPct || 0), 0) /
+            enrichedActive.length
+          ).toFixed(2)
+        )
+      : 0;
+
   // Earnings chart: last 7 days credits
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
@@ -93,15 +108,21 @@ export async function getUserDashboard(userId: string) {
     },
     summary: {
       totalInvestment: totalInvested,
-      totalEarnings: incomeWallet + referralWallet + totalReferralIncome,
+      totalEarnings: incomeWallet + referralWallet,
+      totalReferralIncome,
       totalProjectedIncome: totalProjected,
       activeInvestments,
       completedInvestments,
       teamMembers: teamCount,
       unreadNotifications,
+      liveRoiEarned: Number(liveRoiEarned.toFixed(4)),
+      paidRoiOnActive: Number(paidRoiOnActive.toFixed(2)),
+      roiProgressPct,
+      incomeWalletBalance: incomeWallet,
     },
     plans,
-    recentOrders,
+    recentOrders: recentOrders.map((o) => enrichOrderIncome(o as Record<string, unknown>)),
+    activeRoiOrders: enrichedActive.slice(0, 3),
     recentActivity: recentTxns,
     charts: {
       earningsOverview: earningsChart,

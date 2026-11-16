@@ -165,3 +165,94 @@ body {
 .ak-pwa-popup {
   animation: pwa-popup-in 0.35s ease-out;
 }
+
+@keyframes ak-install-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    box-shadow:
+      0 12px 28px rgba(0, 102, 255, 0.28),
+      0 0 0 0 rgba(255, 140, 0, 0.2);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow:
+      0 18px 36px rgba(0, 102, 255, 0.38),
+      0 0 0 8px rgba(255, 140, 0, 0);
+  }
+}
+
+@keyframes ak-install-shine {
+  0% {
+    transform: translateX(-140%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(240%) skewX(-18deg);
+  }
+}
+
+@keyframes ak-install-icon-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-3px);
+  }
+  60% {
+    transform: translateY(1px);
+  }
+}
+
+@keyframes ak-install-arrow {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(3px);
+    opacity: 0.75;
+  }
+}
+
+.ak-install-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  animation: ak-install-breathe 2.6s ease-in-out infinite;
+}
+
+.ak-install-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.38) 45%,
+    transparent 70%
+  );
+  transform: translateX(-140%) skewX(-18deg);
+  animation: ak-install-shine 3.2s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ak-install-btn:hover {
+  animation-play-state: paused;
+  transform: translateY(-2px) scale(1.015);
+  filter: brightness(1.06);
+}
+
+.ak-install-btn:active {
+  transform: scale(0.985);
+}
+
+.ak-install-icon {
+  animation: ak-install-icon-bob 2s ease-in-out infinite;
+}
+
+.ak-install-arrow {
+  animation: ak-install-arrow 1.35s ease-in-out infinite;
+}

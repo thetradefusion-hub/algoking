@@ -9,6 +9,7 @@ import { Notification } from '../models/Notification.js';
 import { ApiError } from '../utils/apiError.js';
 import { generateOrderId } from '../utils/ids.js';
 import { applyLedgerEntry, ensureUserWallets } from './walletService.js';
+import { enrichOrderIncome } from './incomePayoutService.js';
 
 export async function listActivePlans() {
   return Plan.find({ status: 'active' }).sort({ sortOrder: 1, createdAt: -1 }).lean();
@@ -171,6 +172,8 @@ export async function purchasePlan(userId: string, planId: string, idempotencyKe
             status: 'active',
             startDate,
             endDate,
+            paidHours: 0,
+            totalIncomePaid: 0,
             walletTransactionId: ledger.transaction?.transactionId,
             idempotencyKey,
           },
@@ -192,7 +195,7 @@ export async function purchasePlan(userId: string, planId: string, idempotencyKe
           {
             userId,
             title: 'Investment Purchased',
-            message: `You invested in ${plan.name}. Projected income is non-guaranteed — invest responsibly.`,
+            message: `You invested in ${plan.name}. ROI income will credit to your Income Wallet every hour.`,
             type: 'investment_purchased',
             meta: { orderId: order!.orderId },
           },
@@ -301,7 +304,7 @@ export async function listUserOrders(
     InvestmentOrder.find(filter).sort({ createdAt: -1 }).skip(opts.skip).limit(opts.limit).lean(),
     InvestmentOrder.countDocuments(filter),
   ]);
-  return { items, total };
+  return { items: items.map((item) => enrichOrderIncome(item as Record<string, unknown>)), total };
 }
 
 export async function getUserOrder(userId: string, orderId: string) {
@@ -310,5 +313,5 @@ export async function getUserOrder(userId: string, orderId: string) {
     userId,
   }).lean();
   if (!order) throw ApiError.notFound('Order not found');
-  return order;
+  return enrichOrderIncome(order as Record<string, unknown>);
 }

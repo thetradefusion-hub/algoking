@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
+import { PwaInstallButton } from '@/components/pwa/PwaInstallButton'
 import { getErrorMessage, useAuth } from '@/context/AuthContext'
 import { baseURL } from '@/services/api'
 import { cn } from '@/lib/utils'
@@ -45,7 +46,8 @@ export function LoginPage() {
   })
 
   return (
-    <div className="relative z-10 rounded-[28px] bg-white p-5 shadow-[0_20px_50px_rgba(0,27,61,0.12)] ring-1 ring-brand-primary/5">
+    <div className="space-y-4">
+      <div className="relative z-10 rounded-[28px] bg-white p-5 shadow-[0_20px_50px_rgba(0,27,61,0.12)] ring-1 ring-brand-primary/5">
       <div className="mb-6 text-center">
         <h2 className="text-2xl font-extrabold tracking-tight text-brand-text">Sign In</h2>
         <p className="mt-1.5 text-sm text-brand-muted">Access your AlgoKing account</p>
@@ -133,6 +135,9 @@ export function LoginPage() {
           Create account
         </Link>
       </p>
+      </div>
+
+      <PwaInstallButton />
     </div>
   )
 }

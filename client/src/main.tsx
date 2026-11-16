@@ -7,9 +7,10 @@ import { AuthProvider } from '@/context/AuthContext'
 import { CurrencyProvider } from '@/context/CurrencyContext'
 import { PwaInstallPrompt } from '@/components/pwa/PwaInstallPrompt'
 import { AppRouter } from '@/routes/AppRouter'
-import { registerServiceWorker } from '@/lib/pwa'
+import { initPwaInstallCapture, registerServiceWorker } from '@/lib/pwa'
 import './index.css'
 
+initPwaInstallCapture()
 void registerServiceWorker()
 
 const queryClient = new QueryClient({

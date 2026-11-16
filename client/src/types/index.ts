@@ -68,6 +68,16 @@ export interface InvestmentOrder {
   startDate?: string
   endDate?: string
   createdAt: string
+  paidHours?: number
+  totalIncomePaid?: number
+  lastPayoutAt?: string
+  totalIncome?: number
+  totalHours?: number
+  hourlyIncome?: number
+  progressPct?: number
+  liveEarned?: number
+  hoursCompleted?: number
+  nextHourAt?: string | null
 }
 
 export interface ApiResponse<T> {

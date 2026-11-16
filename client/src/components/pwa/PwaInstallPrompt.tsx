@@ -6,6 +6,8 @@ import {
   dismissInstallPrompt,
   isIosDevice,
   isStandaloneDisplay,
+  subscribeInstallPrompt,
+  triggerPwaInstall,
   wasInstallDismissed,
 } from '@/lib/pwa'
 import { cn } from '@/lib/utils'
@@ -19,16 +21,14 @@ export function PwaInstallPrompt() {
   useEffect(() => {
     if (isStandaloneDisplay() || wasInstallDismissed()) return
 
-    const onBeforeInstall = (e: Event) => {
-      e.preventDefault()
-      setDeferred(e as BeforeInstallPromptEvent)
-      setOpen(true)
-      setIosHint(false)
-    }
+    const unsub = subscribeInstallPrompt((event) => {
+      setDeferred(event)
+      if (event) {
+        setOpen(true)
+        setIosHint(false)
+      }
+    })
 
-    window.addEventListener('beforeinstallprompt', onBeforeInstall)
-
-    // iOS Safari has no beforeinstallprompt — show Add to Home Screen tip
     if (isIosDevice()) {
       const t = window.setTimeout(() => {
         if (!isStandaloneDisplay() && !wasInstallDismissed()) {
@@ -38,26 +38,17 @@ export function PwaInstallPrompt() {
       }, 1800)
       return () => {
         window.clearTimeout(t)
-        window.removeEventListener('beforeinstallprompt', onBeforeInstall)
+        unsub()
       }
     }
 
-    // Desktop/Android: if event already missed, still allow a soft prompt later via custom event
-    const t = window.setTimeout(() => {
-      // Keep closed until beforeinstallprompt; no forced fake popup on desktop without prompt
-    }, 0)
-
-    return () => {
-      window.clearTimeout(t)
-      window.removeEventListener('beforeinstallprompt', onBeforeInstall)
-    }
+    return unsub
   }, [])
 
   useEffect(() => {
     const onInstalled = () => {
       setOpen(false)
       setDeferred(null)
-      dismissInstallPrompt()
     }
     window.addEventListener('appinstalled', onInstalled)
     return () => window.removeEventListener('appinstalled', onInstalled)
@@ -77,16 +68,11 @@ export function PwaInstallPrompt() {
     }
     setInstalling(true)
     try {
-      await deferred.prompt()
-      const choice = await deferred.userChoice
-      if (choice.outcome === 'accepted') {
+      const outcome = await triggerPwaInstall()
+      if (outcome === 'accepted' || outcome === 'dismissed') {
         setOpen(false)
         dismissInstallPrompt()
-      } else {
-        dismissInstallPrompt()
-        setOpen(false)
       }
-      setDeferred(null)
     } finally {
       setInstalling(false)
     }

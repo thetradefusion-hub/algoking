@@ -6,10 +6,22 @@ export type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
 
+type InstallListener = (event: BeforeInstallPromptEvent | null) => void
+
+let deferredPrompt: BeforeInstallPromptEvent | null = null
+let captureStarted = false
+const listeners = new Set<InstallListener>()
+
+function notifyListeners() {
+  listeners.forEach((listener) => listener(deferredPrompt))
+}
+
 export function isStandaloneDisplay() {
   if (typeof window === 'undefined') return false
   const mq = window.matchMedia('(display-mode: standalone)').matches
-  const iosStandalone = 'standalone' in navigator && Boolean((navigator as Navigator & { standalone?: boolean }).standalone)
+  const iosStandalone =
+    'standalone' in navigator &&
+    Boolean((navigator as Navigator & { standalone?: boolean }).standalone)
   return mq || iosStandalone
 }
 
@@ -36,6 +48,47 @@ export function dismissInstallPrompt() {
   } catch {
     // ignore
   }
+}
+
+export function getDeferredInstallPrompt() {
+  return deferredPrompt
+}
+
+export function subscribeInstallPrompt(listener: InstallListener) {
+  listeners.add(listener)
+  listener(deferredPrompt)
+  return () => {
+    listeners.delete(listener)
+  }
+}
+
+/** Capture beforeinstallprompt once so popup + permanent button share the same event. */
+export function initPwaInstallCapture() {
+  if (typeof window === 'undefined' || captureStarted) return
+  captureStarted = true
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault()
+    deferredPrompt = e as BeforeInstallPromptEvent
+    notifyListeners()
+  })
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null
+    dismissInstallPrompt()
+    notifyListeners()
+  })
+}
+
+export async function triggerPwaInstall(): Promise<'accepted' | 'dismissed' | 'unavailable'> {
+  if (!deferredPrompt) return 'unavailable'
+  const event = deferredPrompt
+  await event.prompt()
+  const { outcome } = await event.userChoice
+  deferredPrompt = null
+  notifyListeners()
+  if (outcome === 'accepted') dismissInstallPrompt()
+  return outcome
 }
 
 export async function registerServiceWorker() {

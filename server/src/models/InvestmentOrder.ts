@@ -21,6 +21,11 @@ export interface IInvestmentOrder extends Document {
   status: OrderStatus;
   startDate?: Date;
   endDate?: Date;
+  /** Completed hours already credited to Income Wallet */
+  paidHours: number;
+  /** Total ROI amount already credited (INR) */
+  totalIncomePaid: number;
+  lastPayoutAt?: Date;
   walletTransactionId?: string;
   idempotencyKey?: string;
   createdAt: Date;
@@ -50,6 +55,9 @@ const investmentOrderSchema = new Schema<IInvestmentOrder>(
     },
     startDate: { type: Date },
     endDate: { type: Date },
+    paidHours: { type: Number, default: 0, min: 0 },
+    totalIncomePaid: { type: Number, default: 0, min: 0 },
+    lastPayoutAt: { type: Date },
     walletTransactionId: { type: String },
     idempotencyKey: { type: String },
   },

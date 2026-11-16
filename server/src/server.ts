@@ -3,10 +3,12 @@ import { connectDatabase } from './config/db.js';
 import { env } from './config/env.js';
 import { logger } from './utils/logger.js';
 import { ensureDefaultSettings } from './services/settingsService.js';
+import { startIncomePayoutScheduler } from './services/incomePayoutService.js';
 
 async function bootstrap() {
   await connectDatabase();
   await ensureDefaultSettings();
+  startIncomePayoutScheduler(60_000);
 
   const app = createApp();
   app.listen(env.PORT, () => {
