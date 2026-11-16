@@ -16,7 +16,7 @@ import {
 import { Link } from 'react-router-dom'
 import { UserHeader } from '@/components/user/UserHeader'
 import { CryptoMarketsList } from '@/components/user/CryptoMarketsList'
-import { RoiIncomeProgress } from '@/components/user/RoiIncomeProgress'
+import { LiveRoiDashboardCard } from '@/components/user/LiveRoiDashboardCard'
 import { DashboardSkeleton } from '@/components/ui/Skeleton'
 import { fetchDashboard, fetchPublicSettings } from '@/services/userService'
 import { formatINR } from '@/lib/format'
@@ -227,53 +227,15 @@ export function DashboardPage() {
           </div>
         </div>
 
-        {/* Live ROI income */}
-        {(data.summary?.activeInvestments || 0) > 0 ? (
-          <div className="ak-card space-y-3 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-bold text-brand-text">Live ROI Income</h3>
-                <p className="text-[11px] text-brand-muted">
-                  Grows every hour · credited to Income Wallet
-                </p>
-              </div>
-              <Link to="/wallet/income" className="text-xs font-semibold text-brand-primary">
-                Wallet
-              </Link>
-            </div>
-            <div className="rounded-2xl bg-[#E6F7EF] px-3.5 py-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-muted">
-                Earning now
-              </p>
-              <p className="mt-1 text-2xl font-extrabold tabular-nums text-brand-success">
-                {formatINR(data.summary?.liveRoiEarned || 0)}
-              </p>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/80">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-brand-success to-[#3DDC97] transition-all"
-                  style={{ width: `${Math.min(100, Number(data.summary?.roiProgressPct || 0))}%` }}
-                />
-              </div>
-              <p className="mt-1.5 text-[11px] text-brand-muted">
-                Credited in wallet: {formatINR(data.wallets?.income?.balance || 0)} · Progress{' '}
-                {Number(data.summary?.roiProgressPct || 0).toFixed(1)}%
-              </p>
-            </div>
-            {(data.activeRoiOrders as InvestmentOrder[] | undefined)?.slice(0, 2).map((order) => (
-              <div key={order._id} className="rounded-2xl border border-brand-primary/10 p-3">
-                <div className="mb-2 flex items-center justify-between gap-2">
-                  <p className="truncate text-sm font-bold text-brand-text">
-                    {order.planSnapshot?.name || 'Plan'}
-                  </p>
-                  <Link to={`/orders/${order._id}`} className="text-[11px] font-semibold text-brand-primary">
-                    Details
-                  </Link>
-                </div>
-                <RoiIncomeProgress order={order} compact />
-              </div>
-            ))}
-          </div>
-        ) : null}
+        {/* Live ROI — computed on client from active orders so Vercel works even if API is mid-deploy */}
+        <LiveRoiDashboardCard
+          incomeWalletBalance={Number(data.wallets?.income?.balance || 0)}
+          apiOrders={
+            (data.activeRoiOrders as InvestmentOrder[] | undefined) ||
+            (data.recentOrders as InvestmentOrder[] | undefined)
+          }
+          activeCount={Number(data.summary?.activeInvestments || 0)}
+        />
 
         {/* Live crypto markets */}
         <CryptoMarketsList limit={8} />

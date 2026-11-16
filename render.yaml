@@ -17,7 +17,7 @@ services:
       - key: PORT
         value: 5000
       - key: PLATFORM_MODE
-        value: DEMO
+        value: LIVE
       - key: COOKIE_SECURE
         value: "true"
       - key: COOKIE_SAME_SITE
